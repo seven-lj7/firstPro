@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        /*v-cloak指令能防止数据加载比较没慢时页面闪出{{}} 
+        给最外层的盒子加上v-cloak属性  在css中设置[v-cloak]{display:none} */
+        
+        [v-cloak] {
+            display: none;
+        }
+        
+        #box {
+            width: 350px;
+            margin: 30px auto;
+            background: #eee;
+            padding: 30px 50px;
+        }
+        
+        li {
+            list-style: none;
+        }
+        
+        ul {
+            padding-left: 0;
+        }
+        
+        .add {
+            width: 200px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        
+        .span {
+            color: skyblue;
+        }
+        
+        .finish {
+            color: #ccc;
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="box" v-cloak>
+
+
+        <h1>任务列表</h1>
+        <p>任务总数：{{arr.length}}；还有：{{choose()}}个未完成；【<span class="span" @click="finish()"> 完成</span>】</p>
+        <ul>
+            <!-- 给li遍历，添加样式上 -->
+            <li v-for="(item,index) in arr" :class="{finish:item.bol}">
+                <input type="checkbox" v-model="item.bol">
+                <span v-text="item.des" v-show="!item.edit" @click="edit(index)"></span>
+                <!-- 
+                    @blur 失去焦点，如果是简单的函数，直接写事件=简单js代码
+                 -->
+                <input type="text" v-model="item.des" v-show="item.edit" @blur="item.edit=false">
+            </li>
+        </ul>
+        <input type="text" class="add" v-model="msg"><button @click="add">添加</button>
+    </div>
+</body>
+<script>
+    var vm = new Vue({
+        el: "#box",
+        data: {
+            arr: [{
+                des: "设计",
+                bol: false,
+                edit: false
+            }, {
+                des: '编写页面代码',
+                bol: false,
+                edit: false
+            }, {
+                des: '编写js代码',
+                bol: false,
+                edit: false
+            }, {
+                des: '设计产品原型',
+                bol: false,
+                edit: false
+            }],
+            msg: ''
+        },
+        methods: {
+            add() {
+                this.arr.push({
+                    des: this.msg,
+                    bol: false,
+                    edit: false
+                })
+                this.msg = ''
+            },
+            choose() {
+                var n = 0
+                this.arr.forEach(el => {
+                    if (!el.bol) {
+                        n++
+                    }
+                })
+                return n
+
+            },
+            finish() {
+                var temp = this.arr
+                this.arr = []
+                for (var i = 0; i < temp.length; i++) {
+                    if (!temp[i].bol) {
+                        this.arr.push(temp[i])
+                    }
+                }
+            },
+            edit(index) {
+                this.arr[index].edit = true
+            }
+        }
+    })
+</script>
+
+</html>
